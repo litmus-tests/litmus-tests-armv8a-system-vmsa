@@ -6,8 +6,8 @@ page_table_setup = """
     physical pa1;
     *pa1 = 1;
     x |-> invalid;
-    x ?-> invalid at level 2;
     x ?-> pa1;
+    x ?-> invalid at level 2;
 
     identity 0x1000 with code;
 """
