@@ -33,7 +33,7 @@ VBAR_EL1 = "extz(0x1000, 64)"
 "PSTATE.EL" = "0b01"
 "PSTATE.SP" = "0b1"
 # This test doesn't need stage 2, so I disable stage 2 to make it run faster.
-HCR_EL2 = "extz(0x0,64)"
+# HCR_EL2 = "extz(0x0,64)"
 
 [section.thread0_el1_handler]
 address = "0x1000"
