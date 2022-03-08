@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "EntryMerging.RWn0->RO0"
+name = "EntryMerging.RWn0.RO0"
 symbolic = ["x", "y"]
 
 page_table_setup = """
