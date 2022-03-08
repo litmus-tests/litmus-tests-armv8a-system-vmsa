@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "MP.RT.inv+trfi-data+addr.toml"
+name = "MP.RT.inv+trfi-data+addr"
 symbolic = ["w", "x", "y"]
 
 page_table_setup = """
