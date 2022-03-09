@@ -1,0 +1,97 @@
+arch = "AArch64"
+name = "Stage1FillFromStage2"
+symbolic = ["x"]
+
+page_table_setup = """
+    option default_tables = false;
+    intermediate ipa1;
+    physical pa1;
+
+
+    s1table stage1 0x2C0000 {
+        x |-> invalid;
+        x ?-> ipa1;
+
+        identity 0x1000 with code;
+    }
+
+    s2table stage2 0x240000 {
+        ipa1 |-> pa1;
+        ipa1 ?-> invalid;
+        s1table stage1;
+        identity pa_to_ipa(0x1000) with code;
+    }
+
+    s1table hyp_map 0x200000 {
+        identity 0x2000 with code;
+        x |-> invalid;
+        s1table stage1;
+        s2table stage2;
+    }
+
+
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X2, [X1]
+    DSB SY
+    STR X6, [X5]
+    DSB SY
+    TLBI IPAS2E1, X3
+    DSB SY
+    ERET
+L:
+    LDR X8, [X7]
+    NOP
+"""
+
+[thread.0.reset]
+R1 = "pte3(ipa1, stage2)"
+R2 = "extz(0x0,64)"
+R3 = "extz(page(ipa1), 64)"
+R5 = "pte3(x, stage1)"
+R6 = "mkdesc3(oa=ipa1)"
+R7 = "x"
+VBAR_EL1 = "extz(0x1000, 64)"
+VBAR_EL2 = "extz(0x2000, 64)"
+"PSTATE.EL" = "0b10"
+"PSTATE.SP" = "0b1"
+TTBR0_EL1 = "ttbr(asid=0x00, base=stage1)"
+TTBR1_EL1 = "ttbr(asid=0x00, base=stage1)"
+VTTBR_EL2 = "ttbr(vmid=0x00, base=stage2)"
+TTBR0_EL2 = "ttbr(asid=0x00, base=hyp_map)"
+
+# return to EL1h at L
+SPSR_EL2 = "extz(0b00100, 64)"
+ELR_EL2 = "L:"
+
+
+
+
+[section.thread0_el1_handler]
+address = "0x1200"
+code = """
+    MOV X8,#1
+
+    MRS X13,ELR_EL1
+    ADD X13,X13,#4
+    MSR ELR_EL1,X13
+    ERET
+"""
+
+[section.thread0_el2_handler]
+address = "0x2400"
+code = """
+    MOV X8,#1
+
+    MRS X13,ELR_EL2
+    ADD X13,X13,#4
+    MSR ELR_EL2,X13
+    ERET
+"""
+
+
+[final]
+assertion = "0:X8 = 0"
