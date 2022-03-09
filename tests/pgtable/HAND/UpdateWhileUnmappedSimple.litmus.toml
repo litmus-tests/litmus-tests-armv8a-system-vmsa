@@ -26,6 +26,7 @@ code = """
     DSB SY
     STR X4, [X3]
     DSB SY
+    ISB
     LDR X6, [X5]
 """
 
