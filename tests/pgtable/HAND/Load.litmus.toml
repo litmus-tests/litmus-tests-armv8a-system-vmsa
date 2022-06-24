@@ -1,11 +1,10 @@
 arch = "AArch64"
-name = "Load.inv"
+name = "Load"
 symbolic = ["x"]
 
 page_table_setup = """
     physical pa1;
-    x |-> invalid;
-    x ?-> pa1;
+    x |-> pa1;
     identity 0x1000 with code;
     *pa1 = 1;
 """
@@ -33,4 +32,4 @@ code = """
 """
 
 [final]
-assertion = "0:X0 = 0"
+assertion = "0:X0 = 1"
