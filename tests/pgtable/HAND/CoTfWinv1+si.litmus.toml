@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "CoTfW1.inv+si"
+name = "CoTfWinv1+si"
 symbolic = ["x", "y"]
 
 page_table_setup = """
