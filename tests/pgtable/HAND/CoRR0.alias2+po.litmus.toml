@@ -1,6 +1,6 @@
 arch = "AArch64"
 name = "CoRR0.alias2+po"
-symbolic = ["x", "y"]
+symbolic = ["x", "y", "z"]
 
 page_table_setup = """
     physical pa1;
