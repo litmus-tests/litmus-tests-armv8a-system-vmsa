@@ -9,6 +9,7 @@ CoRpteT.EL1+dsb-tlbi-dsb.litmus.toml
 CoRpteTf.inv+addr.litmus.toml
 CoRpteTf.inv+ctrl-isb.litmus.toml
 CoRpteTf.inv+ctrl.litmus.toml
+CoRpteTf.inv+dmb.litmus.toml
 CoRpteTf.inv+dsb-isb.litmus.toml
 CoRpteTf.inv+dsb.litmus.toml
 CoRR0.alias2+po.litmus.toml
