@@ -12,6 +12,7 @@ CoRpteTf.inv+ctrl.litmus.toml
 CoRpteTf.inv+dmb.litmus.toml
 CoRpteTf.inv+dsb-isb.litmus.toml
 CoRpteTf.inv+dsb.litmus.toml
+CoRpteTf.inv+po.litmus.toml
 CoRR0.alias2+po.litmus.toml
 CoRR0.alias+po.litmus.toml
 CoRR2.alias+po.litmus.toml
