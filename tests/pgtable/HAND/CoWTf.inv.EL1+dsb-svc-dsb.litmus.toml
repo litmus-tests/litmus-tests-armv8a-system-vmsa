@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "CoWTf.inv.EL1+dsb-svc"
+name = "CoWTf.inv.EL1+dsb-svc-dsb"
 symbolic = ["x", "y"]
 
 page_table_setup = """
