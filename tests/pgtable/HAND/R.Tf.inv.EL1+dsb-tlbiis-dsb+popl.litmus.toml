@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "R.RTf.inv.EL1+dsb-tlbiis-dsb+popl"
+name = "R.Tf.inv.EL1+dsb-tlbiis-dsb+popl"
 symbolic = ["x", "y", "z"]
 
 page_table_setup = """

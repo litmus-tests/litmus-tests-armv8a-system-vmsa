@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "RWC.RTR.EL1+dsb-isb+dsb-tlbi-dsb"
+name = "RWC.RTR.EL1+ctrl-isb+dsb-tlbi-dsb"
 symbolic = ["x", "y"]
 
 page_table_setup = """
