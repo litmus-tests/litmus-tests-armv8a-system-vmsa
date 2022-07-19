@@ -36,7 +36,7 @@ code = """
 """
 
 [thread.1.reset]
-R0 = "extz(0, 64)"
+R0 = "extz(0x0, 64)"
 R1 = "x"
 VBAR_EL1 = "extz(0x1000, 64)"
 
