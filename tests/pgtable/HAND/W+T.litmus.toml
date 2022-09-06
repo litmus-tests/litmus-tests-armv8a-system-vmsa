@@ -34,7 +34,7 @@ R1 = "x"
 "PSTATE.SP" = "0b0"
 VBAR_EL1 = "extz(0x1000, 64)"
 
-[section.handler]
+[section.thread0_el1_handler]
 address = "0x1000"
 code = """
     MOV X0,#0
