@@ -1,0 +1,58 @@
+arch = "AArch64"
+name = "W+T.misaligned.store"
+symbolic = ["x"]
+
+# two contiguous pages x, y mapped to contiguous pages pa1, pa2
+page_table_setup = """
+    virtual x y;
+    physical pa1 pa2;
+    assert x[48..12] == add_bits_int(y[48..12], 1);
+    assert pa1[48..12] == add_bits_int(pa2[48..12], 1);
+    x |-> pa1;
+    x ?-> invalid;
+    y |-> pa2;
+    identity 0x1000 with code;
+    *pa1 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1]
+"""
+
+[thread.0.reset]
+R0 = "extz(0b0, 64)"
+R1 = "pte3(x, page_table_base)"
+
+[thread.1]
+init = {}
+code = """
+    ADD X1,X1,#(1 << 12)
+    SUB X1,X1,#4
+    STR X0,[X1]
+"""
+
+[thread.1.reset]
+R0 = "exts(0xff, 64)"
+R1 = "x"
+R2 = "extz(0b0, 64)"
+"VBAR_EL1" = "extz(0x1000, 64)"
+"PSTATE.EL" = "0b00"
+"PSTATE.SP" = "0b0"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    MOV X2,#1
+    MRS X13,ELR_EL1
+    ADD X13,X13,#4
+    MSR ELR_EL1,X13
+    ERET
+"""
+
+[types]
+pa2 = "uint64_t"
+
+[final]
+assertion = "true"

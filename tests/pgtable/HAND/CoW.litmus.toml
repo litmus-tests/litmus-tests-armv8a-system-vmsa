@@ -1,0 +1,69 @@
+arch = "AArch64"
+name = "CoW"
+symbolic = ["x"]
+
+page_table_setup = """
+    virtual x y z;
+    physical pa1 pa2;
+    x |-> pa1 with [AP = 0b11] and default;
+    x ?-> invalid;
+    x ?-> pa2 with [AP = 0b01] and default;
+
+    y |-> pa1;
+    z |-> pa2;
+
+    identity 0x1000 with code;
+    *pa1 = 1;
+    *pa2 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1]
+"""
+
+[thread.0.reset]
+R0 = "extz(0b10, 64)"
+R1 = "x"
+R2 = "y"
+R3 = "z"
+R4 = "z"
+R5 = "extz(0b0, 64)"
+R6 = "pte3(x, page_table_base)"
+R7 = "extz(page(x), 64)"
+R8 = "mkdesc3(oa=pa2)"
+R9 = "pte3(x, page_table_base)"
+R20 = "extz(0b0, 64)"
+
+VBAR_EL1 = "extz(0x1000, 64)"
+"PSTATE.EL" = "0b00"
+
+[section.thread0_el1_handler]
+address = "0x1400"
+code = """
+    CBNZ X20,exit
+    LDR X0,[X2]
+    STR X0,[X3]
+    DC CIVAC,X4
+    DSB SY
+    STR X5,[X6]
+    DSB SY
+    TLBI VALE1IS,X7
+    DSB SY
+    STR X8,[X9]
+    MOV X20,#1
+    ERET
+exit:
+    MRS X21,ELR_EL1
+    ADD X21,X21,#4
+    MSR ELR_EL1,X21
+    ERET
+"""
+
+[types]
+pa1 = "uint64_t"
+pa2 = "uint64_t"
+
+[final]
+assertion = "*pa1=1 & *pa2=2"
