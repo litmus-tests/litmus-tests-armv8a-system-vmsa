@@ -32,6 +32,7 @@ CoTfW.inv+po.litmus.toml
 CoTRpte.inv+dsb-isb.litmus.toml
 CoTRpte.inv+dsb.litmus.toml
 CoTRpte.inv+po.litmus.toml
+CoTTf.inv+ctrl-isb.litmus.toml
 CoTTf.inv+dsb-isb.litmus.toml
 CoTTf.inv+po.litmus.toml
 CoTT.ro+dmb.litmus.toml
@@ -52,8 +53,10 @@ CoWinvT.EL1+dsb-tlbiis-dsb.litmus.toml
 CoWinvT+po.litmus.toml
 CoWinvTv1.2+dsb-tlbivmidis-dsb-eret.litmus.toml
 CoWinvTv2.2+dsb-tlbivmidis-msrvttbr-dsb-eret.litmus.toml
+CoW.litmus.toml
 CoWR.alias.litmus.toml
 CoWR.inv.litmus.toml
+CoWroW.inv+dsb-isb.litmus.toml
 CoWTa1.1.inv+dsb-tlbiasidis-dsb-eret.litmus.toml
 CoWTa2.1.inv+dsb-tlbiasidis-dsb-eret.litmus.toml
 CoWTf.inv+[dmb]-dmb-addr.litmus.toml
@@ -106,6 +109,7 @@ MP.RT.EL2+dsb-tlbiipais-dsb-tlbiis-dsb+dsb-isb.litmus.toml
 MP.RT.EL2+dsb-tlbiis-dsb-tlbiipais-dsb+dsb-isb.litmus.toml
 MP.RTf.inv+dmb+addr.litmus.toml
 MP.RTf.inv+dmb+ctrl-isb.litmus.toml
+MP.RTf.inv+dmb+ctrl.litmus.toml
 MP.RTf.inv+dmb+data.litmus.toml
 MP.RTf.inv+dmb+dsb-isb.litmus.toml
 MP.RTf.inv+dmb+po.litmus.toml
@@ -130,6 +134,7 @@ MP.TfR+dmb+eret.litmus.toml
 MP.TR.inv+dmb+isb.litmus.toml
 MP.TR.inv+dmb+msr-isb.litmus.toml
 MP.TR.inv+dmb+msr.litmus.toml
+MP.TR.inv+dmb+po.litmus.toml
 MP.TTf.inv+dmb+addr.litmus.toml
 MP.TTf.inv+dmb+dsb-isb.litmus.toml
 MP.TTf.inv+dmb+po.litmus.toml
@@ -147,6 +152,8 @@ PPODA.RT.inv.litmus.toml
 PPORA.RT.inv.litmus.toml
 RBS+dsb-tlbiis-dsb.litmus.toml
 RDW.alias.litmus.toml
+ROT+dmb.litmus.toml
+ROT+dsb-tlbivmallis-dsb.litmus.toml
 ROT.inv+dmbst.litmus.toml
 ROT.inv+dsb.litmus.toml
 ROT.inv+po.litmus.toml
@@ -186,6 +193,7 @@ WDS+po-dsb-tlbiipa-dsb-eret.litmus.toml
 WDS+po-dsb-tlbiipa-dsb-tlbiis-dsb-eret.litmus.toml
 W.litmus.toml
 WRC.RRTf.inv+addrs.litmus.toml
+WRC.RRTf.inv+dmb+dsb-isb.litmus.toml
 WRC.RRTf.inv+dmbs.litmus.toml
 WRC.RRTf.inv+dsb+ctrl-isb.litmus.toml
 WRC.RRTf.inv+dsb+dsb-isb.litmus.toml
@@ -199,11 +207,14 @@ WRC.TfRR+po+dsb.litmus.toml
 WRC.TfRR+pos.litmus.toml
 WRC.TfRT+dsb-tlbiis-dsb+dsb-isb.litmus.toml
 WRC.TfRT+po+dsb-isb.litmus.toml
+WRC.TRR.inv+po+dsb.litmus.toml
 WRC.TRTf.inv+addrs.litmus.toml
 WRC.TRTf.inv+dmbs.litmus.toml
 WRC.TRTf.inv+dsb+dsb-isb.litmus.toml
 WRC.TRTf.inv+dsbs.litmus.toml
+WRC.TRTf.inv+po+dsb-isb.litmus.toml
 WRC.TRTf.inv+pos.litmus.toml
 WRC.TTTf.inv+addrs.litmus.toml
 WRC.TTTf.inv+data+addr.litmus.toml
 W+T.litmus.toml
+W+T.misaligned.store.litmus.toml
