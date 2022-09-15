@@ -207,6 +207,7 @@ WRC.TfRR+po+dsb.litmus.toml
 WRC.TfRR+pos.litmus.toml
 WRC.TfRT+dsb-tlbiis-dsb+dsb-isb.litmus.toml
 WRC.TfRT+po+dsb-isb.litmus.toml
+WRC.TRR.inv+po+dmb.litmus.toml
 WRC.TRR.inv+po+dsb.litmus.toml
 WRC.TRTf.inv+addrs.litmus.toml
 WRC.TRTf.inv+dmbs.litmus.toml
