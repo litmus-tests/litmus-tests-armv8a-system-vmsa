@@ -1,0 +1,43 @@
+arch = "AArch64"
+name = "CoWrwW.ro+dsb-isb"
+symbolic = ["x"]
+
+page_table_setup = """
+    physical pa1;
+    x |-> pa1 with [AP = 0b11] and default;
+    x ?-> pa1;
+    *pa1 = 0;
+    identity 0x1000 with code;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1]
+    DSB SY
+    ISB
+    STR X2,[X3]
+"""
+
+[thread.0.reset]
+R0 = "mkdesc3(oa=pa1, AP=0b01)"
+R1 = "pte3(x, page_table_base)"
+R2 = "extz(0x1, 64)"
+R3 = "x"
+VBAR_EL1 = "extz(0x1000, 64)"
+"PSTATE.SP" = "0b0"
+
+[section.thread0_el1_handler]
+address = "0x1400"
+code = """
+    MRS X20,ELR_EL1
+    ADD X20,X20,#4
+    MSR ELR_EL1,X20
+    ERET
+"""
+
+[types]
+pa1 = "uint64_t"
+
+[final]
+assertion = "*pa1=0"

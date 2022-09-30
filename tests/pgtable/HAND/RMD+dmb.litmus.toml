@@ -1,0 +1,52 @@
+arch = "AArch64"
+name = "RMD+dmb"
+symbolic = ["x", "y"]
+
+page_table_setup = """
+    physical pa1 pa2;
+    x |-> pa1 with [AP = 0b11] and default;
+    x ?-> pa2 with [AP = 0b10] and default;
+    y |-> pa2;
+    *pa1 = 0;
+    *pa2 = 1;
+    identity 0x1000 with code;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1]
+    DMB SY
+    STR X2,[X3]
+"""
+
+[thread.0.reset]
+R0 = "mkdesc3(oa=pa2, AP=0b10)"
+R1 = "pte3(x, page_table_base)"
+R2 = "extz(0x1, 64)"
+R3 = "y"
+
+
+[thread.1]
+init = {}
+code = """
+    MOV X0,#0
+    LDR X0,[X1]
+"""
+
+[thread.1.reset]
+R1 = "x"
+VBAR_EL1 = "extz(0x1000, 64)"
+"PSTATE.SP" = "0b0"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    MRS X20,ELR_EL1
+    ADD X20,X20,#4
+    MSR ELR_EL1,X20
+    ERET
+"""
+
+[final]
+assertion = "1:X0=1"

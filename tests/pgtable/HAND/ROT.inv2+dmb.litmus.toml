@@ -1,0 +1,59 @@
+arch = "AArch64"
+name = "ROT.inv2+dmb"
+symbolic = ["x"]
+
+# we know that X will be translated by the level2 entry at 0x283000
+# through magic introspection of the isla source
+page_table_setup = """
+physical pa1;
+intermediate ipa1;
+
+assert pa1 == ipa1;
+ipa1 |-> pa1;
+
+x |-> invalid at level 2;
+x ?-> table(0x283000) at level 2;
+
+s1table new_table 0x280000 {
+  x |-> ipa1;
+  x ?-> invalid;
+};
+
+identity 0x1000 with code;
+"""
+
+[thread.0]
+code = """
+    STR X0,[X1]
+    DMB SY
+    STR X2,[X3]
+"""
+
+[thread.0.reset]
+R0 = "extz(0b0, 64)"
+R1 = "pte3(x, new_table)"
+R2 = "mkdesc2(table=extz(0x283000, 64))"
+R3 = "pte2(x, page_table_base)"
+"PSTATE.EL" = "0b01"
+
+[thread.1]
+code = """
+    MOV X0,#1
+    LDR X0,[X1]
+"""
+
+[thread.1.reset]
+R1 = "x"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    MRS X13,ELR_EL1
+    ADD X13,X13,#4
+    MSR ELR_EL1,X13
+    ERET
+"""
+
+[final]
+assertion = "1:X0=0"
