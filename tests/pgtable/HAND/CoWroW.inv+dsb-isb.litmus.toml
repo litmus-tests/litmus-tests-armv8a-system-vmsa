@@ -1,12 +1,11 @@
 arch = "AArch64"
 name = "CoWroW.inv+dsb-isb"
-symbolic = ["x", "y"]
+symbolic = ["x"]
 
 page_table_setup = """
     physical pa1;
     x |-> invalid;
     x ?-> pa1 with [AP = 0b11] and default;
-    y |-> pa1 with [AP = 0b11] and default;
     *pa1 = 0;
     identity 0x1000 with code;
 """
@@ -15,12 +14,13 @@ page_table_setup = """
 init = {}
 code = """
     STR X0,[X1]
-    DMB SY
+    DSB SY
+    ISB
     STR X2,[X3]
 """
 
 [thread.0.reset]
-R0 = "desc3(y, page_table_base)"
+R0 = "mkdesc3(oa=pa1, AP=0b11)"
 R1 = "pte3(x, page_table_base)"
 R2 = "extz(0x1, 64)"
 R3 = "x"
@@ -37,7 +37,7 @@ code = """
 """
 
 [types]
-y = "uint64_t"
+pa1 = "uint64_t"
 
 [final]
-assertion = "*y=1"
+assertion = "*pa1=1"

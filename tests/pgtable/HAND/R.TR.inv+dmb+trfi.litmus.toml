@@ -6,6 +6,7 @@ page_table_setup = """
     physical pa1;
     w |-> invalid;
     w ?-> pa1;
+    w ?-> raw(2);
     x |-> pa1;
     *pa1 = 0;
 
@@ -23,7 +24,7 @@ code = """
 [thread.0.reset]
 R0 = "extz(0x2, 64)"
 R1 = "x"
-R2 = "extz(0x0, 64)"
+R2 = "extz(0x2, 64)"
 R3 = "pte3(w, page_table_base)"
 
 [thread.1]
@@ -63,4 +64,4 @@ code = """
 R1 = "pte3(w, page_table_base)"
 
 [final]
-assertion = "1:X2=0 & 2:X0=0 & 2:X2=mkdesc3(oa=pa1)"
+assertion = "1:X2=0 & 2:X0=2 & 2:X2=mkdesc3(oa=pa1)"

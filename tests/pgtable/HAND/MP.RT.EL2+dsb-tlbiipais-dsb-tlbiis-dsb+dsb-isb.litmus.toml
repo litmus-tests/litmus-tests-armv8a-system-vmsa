@@ -1,6 +1,6 @@
 arch = "AArch64"
 name = "MP.RT.EL2+dsb-tlbiipais-dsb-tlbiis-dsb+dsb-isb"
-symbolic = ["x", "y"]
+symbolic = ["x", "y", "z"]
 
 page_table_setup = """
 physical pa1 pa2;
@@ -12,6 +12,8 @@ ipa1 ?-> invalid;
 
 y |-> ipa2;
 ipa2 |-> pa2;
+
+z |-> pa2;
 
 identity 0x2000 with code;
 
@@ -34,7 +36,7 @@ code = """
 R0 = "extz(0b0, 64)"
 R1 = "pte3(ipa1, s2_page_table_base)"
 R2 = "extz(0b1, 64)"
-R3 = "y"
+R3 = "z"
 R4 = "extz(page(ipa1), 64)"
 "PSTATE.EL" = "0b10"
 
@@ -55,7 +57,7 @@ R3 = "x"
 
 VBAR_EL2 = "extz(0x2000, 64)"
 
-[section.thread1_el1_handler]
+[section.thread1_el2_handler]
 address = "0x2400"
 code = """
     MOV X2,#1
@@ -67,4 +69,4 @@ code = """
 """
 
 [final]
-assertion = "1:X0 = 1 & 1:X2 = 0"
+assertion = "1:X0=1 & 1:X2=0"

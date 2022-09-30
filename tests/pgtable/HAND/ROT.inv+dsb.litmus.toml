@@ -11,15 +11,13 @@ intermediate ipa1;
 assert pa1 == ipa1;
 ipa1 |-> pa1;
 
+x |-> invalid at level 2;
+x ?-> table(0x283000) at level 2;
+
 s1table new_table 0x280000 {
   x |-> invalid;
   x ?-> ipa1;
 };
-
-identity 0x283000 with default;
-
-x |-> invalid at level 2;
-x ?-> table(0x283000) at level 2;
 
 identity 0x1000 with code;
 """
@@ -50,13 +48,22 @@ VBAR_EL1 = "extz(0x1000, 64)"
 [section.thread1_el1_handler]
 address = "0x1400"
 code = """
+    // read ESR_EL1.ISS, to see if fault at Level 2 or 3.
     MRS X14,ESR_EL1
     AND X14,X14,#0b111
     CMP X14,#0b111
     MOV X17,#1
     MOV X18,#2
-    // if ESR_EL1.ISS.DFSC == Translation Level 3 then x2 = 1 else x2 = 2
+    // if ESR_EL1.ISS.DFSC == Translation Level 3 then x0 = 1 else x0 = 2
     CSEL X0,X17,X18,eq
+
+    // advance ELR
+    MRS X13,ELR_EL1
+    ADD X13,X13,#4
+    MSR ELR_EL1,X13
+
+    // return
+    ERET
 """
 
 [final]

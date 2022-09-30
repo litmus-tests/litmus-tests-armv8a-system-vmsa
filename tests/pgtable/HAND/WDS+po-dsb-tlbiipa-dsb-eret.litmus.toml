@@ -41,12 +41,13 @@ R6 = "extz(page(x), 64)"
 VBAR_EL1 = "extz(0x1000, 64)"
 VBAR_EL2 = "extz(0x2000, 64)"
 "PSTATE.EL" = "0b10"
+"PSTATE.SP" = "0b0"
 # return to EL1h at L0
 SPSR_EL2 = "extz(0b00100, 64)"
 ELR_EL2 = "L0:"
 
 [section.thread0_el1_handler]
-address = "0x1200"
+address = "0x1000"
 code = """
     MOV X4,#1
 
