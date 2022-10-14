@@ -24,16 +24,16 @@ code = """
 """
 
 [thread.0.reset]
-R0 = "extz(0b10, 64)"
+R0 = "extz(0x2, 64)"
 R1 = "x"
-R2 = "y"
-R3 = "z"
+R3 = "y"
 R4 = "z"
-R5 = "extz(0b0, 64)"
-R6 = "pte3(x, page_table_base)"
-R7 = "extz(page(x), 64)"
-R8 = "mkdesc3(oa=pa2)"
-R9 = "pte3(x, page_table_base)"
+R5 = "z"
+R6 = "extz(0b0, 64)"
+R7 = "pte3(x, page_table_base)"
+R8 = "extz(page(x), 64)"
+R9 = "mkdesc3(oa=pa2)"
+R10 = "pte3(x, page_table_base)"
 R20 = "extz(0b0, 64)"
 
 VBAR_EL1 = "extz(0x1000, 64)"
@@ -43,15 +43,15 @@ VBAR_EL1 = "extz(0x1000, 64)"
 address = "0x1400"
 code = """
     CBNZ X20,exit
-    LDR X0,[X2]
-    STR X0,[X3]
-    DC CIVAC,X4
+    LDR X2,[X3]
+    STR X2,[X4]
+    DC CIVAC,X5
     DSB SY
-    STR X5,[X6]
+    STR X6,[X7]
     DSB SY
-    TLBI VALE1IS,X7
+    TLBI VALE1IS,X8
     DSB SY
-    STR X8,[X9]
+    STR X9,[X10]
     MOV X20,#1
     ERET
 exit:
