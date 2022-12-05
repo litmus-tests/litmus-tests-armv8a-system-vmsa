@@ -1,7 +1,6 @@
-# this is a skeleton; we thenb approximate an IPI by interposing SVCs at various points
 arch = "AArch64"
 name = "gcipi1"
-symbolic = ["trap", "done", "gcPreempt", "fragile"]
+symbolic = ["trap", "done", "gcPreempt", "fragile", "gic"]
 
 page_table_setup = """
     physical pa1 pa2 pa3 pa4 pa5;
@@ -17,7 +16,7 @@ page_table_setup = """
     *pa2 = 0;
     *pa3 = 0;
     *pa4 = 0;
-    *pa4 = 1;
+    *pa5 = 1;
 """
 
 [thread.0]
@@ -53,7 +52,7 @@ R9 = "fragile"
 [thread.1]
 init = {}
 code = """
-    SVC
+    SVC #0
     STR X0,[X1] // W gcPreempt 1
     LDR X2,[X3] // R trap 0
     CBZ X2, do_sensitive
