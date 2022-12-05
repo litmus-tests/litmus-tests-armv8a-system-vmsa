@@ -1,0 +1,93 @@
+arch = "AArch64"
+name = "gcipi"
+symbolic = ["trap", "done", "gcPreempt", "fragile"]
+
+page_table_setup = """
+    physical pa1 pa2 pa3 pa4;
+    trap |-> pa1;
+    done |-> pa2;
+    gcPreempt |-> pa3;
+    fragile |-> pa4;
+
+    identity 0x1000 with code;
+
+    *pa1 = 0;
+    *pa2 = 0;
+    *pa3 = 0;
+    *pa4 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1] // W trap 1
+    DMB ISH
+    // IPI // this is very pseudocode
+    LDR X2,[X3] // R done 1
+    CBZ X2, exit
+    DMB ISH
+    LDR X4,[X5] // R gcPreempt 0
+    CBNZ X4, exit
+    LDR X6,[X7] // do GC
+exit:
+    NOP
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "trap"
+R2 = "extz(0b0, 64)"
+R3 = "done"
+R4 = "extz(0b0, 64)"
+R5 = "gcPreempt"
+R6 = "extz(0b0, 64)"
+R7 = "fragile"
+
+"PSTATE.EL" = "0b01"
+
+[thread.1]
+init = {}
+code = """
+    STR X0,[X1] // W gcPreempt 1
+    LDR X2,[X3] // R trap 0
+    CBZ X2, do_sensitive
+    B end
+do_sensitive:
+    STR X4,[X5] // W fragile 1
+end:
+    NOP // 
+"""
+
+[thread.1.reset]
+R0 = "extz(0b1, 64)"
+R1 = "gcPreempt"
+R2 = "extz(0b0, 64)"
+R3 = "trap"
+R4 = "extz(0b1, 64)"
+R5 = "fragile"
+R6 = "extz(0b1, 64)"
+R7 = "done"
+R8 = "extz(0b0, 64)"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b00"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    MOV X8,#1
+
+    DMB ISH
+    STR X6,[X7]
+
+    MRS X13,ELR_EL1
+    ADD X13,X13,#4
+    MSR ELR_EL1,X13
+    ERET
+"""
+
+[final]
+# "1:trap = 0, 0:done=1, 0:gcPreempt = 0, 1:X0=0"
+assertion = "0:X6 = 1"
+
