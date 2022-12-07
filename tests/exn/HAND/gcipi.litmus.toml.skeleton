@@ -1,7 +1,6 @@
-# this is a skeleton; we then approximate an IPI by interposing SVCs at various points
 arch = "AArch64"
-name = "gcipi"
-symbolic = ["trap", "done", "gcPreempt", "fragile"]
+name = "gcipi.skeleton"
+symbolic = ["trap", "done", "gcPreempt", "fragile", "gic"]
 
 page_table_setup = """
     physical pa1 pa2 pa3 pa4 pa5;
@@ -53,12 +52,11 @@ R9 = "fragile"
 [thread.1]
 init = {}
 code = """
-    // need to interpose SVC corresponding to IPI
-    // SVC // option 1
+    // option 1. SVC #0
     STR X0,[X1] // W gcPreempt 1
-    // SVC // option 2
+    // option 2. SVC #0
     LDR X2,[X3] // R trap 0
-    // SVC // option 3
+    // option 3. SVC #0
     CBZ X2, do_sensitive
     B end
 do_sensitive:
@@ -74,9 +72,10 @@ R2 = "extz(0b0, 64)"
 R3 = "trap"
 R4 = "extz(0b1, 64)"
 R5 = "fragile"
-R6 = "extz(0b1, 64)"
-R7 = "done"
-R8 = "extz(0b0, 64)"
+R6 = "extz(0b0, 64)"
+R7 = "gic"
+R8 = "extz(0b1, 64)"
+R9 = "done"
 VBAR_EL1 = "extz(0x1000, 64)"
 
 "PSTATE.SP" = "0b0"
@@ -85,18 +84,15 @@ VBAR_EL1 = "extz(0x1000, 64)"
 [section.thread1_el1_handler]
 address = "0x1400"
 code = """
-    MOV X8,#1
-
+    LDR X6,[X7]
+    CBZ X6, return
     DMB ISH
-    STR X6,[X7]
-
-    MRS X13,ELR_EL1
-    ADD X13,X13,#4
-    MSR ELR_EL1,X13
+    STR X8,[X9]
+return:
     ERET
 """
 
 [final]
 # "1:trap = 0, 0:done=1, 0:gcPreempt = 0, 1:X0=0"
-assertion = "0:X6 = 1"
+assertion = "0:X8 = 1"
 

@@ -16,7 +16,7 @@ page_table_setup = """
     *pa2 = 0;
     *pa3 = 0;
     *pa4 = 0;
-    *pa5 = 1;
+    *pa5 = 0;
 """
 
 [thread.0]
@@ -70,9 +70,10 @@ R2 = "extz(0b0, 64)"
 R3 = "trap"
 R4 = "extz(0b1, 64)"
 R5 = "fragile"
-R6 = "extz(0b1, 64)"
-R7 = "done"
-R8 = "extz(0b0, 64)"
+R6 = "extz(0b0, 64)"
+R7 = "gic"
+R8 = "extz(0b1, 64)"
+R9 = "done"
 VBAR_EL1 = "extz(0x1000, 64)"
 
 "PSTATE.SP" = "0b0"
@@ -81,18 +82,15 @@ VBAR_EL1 = "extz(0x1000, 64)"
 [section.thread1_el1_handler]
 address = "0x1400"
 code = """
-    MOV X8,#1
-
+    LDR X6,[X7]
+    CBZ X6, return
     DMB ISH
-    STR X6,[X7]
-
-    MRS X13,ELR_EL1
-    ADD X13,X13,#4
-    MSR ELR_EL1,X13
+    STR X8,[X9]
+return:
     ERET
 """
 
 [final]
 # "1:trap = 0, 0:done=1, 0:gcPreempt = 0, 1:X0=0"
-assertion = "0:X6 = 1"
+assertion = "0:X8 = 1"
 
