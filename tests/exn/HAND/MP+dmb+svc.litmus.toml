@@ -1,0 +1,56 @@
+arch = "AArch64"
+name = "MP+dmb+svc"
+symbolic = ["x", "y"]
+
+page_table_setup = """
+    physical pa1 pa2;
+    x |-> pa1;
+    y |-> pa2;
+
+    identity 0x1000 with code;
+
+    *pa1 = 0;
+    *pa2 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1] // W x 1
+    DMB SY
+    STR X2,[X3] // W y 1
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "extz(0b1, 64)"
+R3 = "y"
+
+"PSTATE.EL" = "0b01"
+
+[thread.1]
+init = {}
+code = """
+    LDR X0,[X1] // R y
+    SVC #0
+"""
+
+[thread.1.reset]
+R1 = "y"
+R3 = "x"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b00"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    LDR X2,[X3] // R x
+    ERET
+"""
+
+[final]
+assertion = "1:X0=1 & 1:X2=0"
+

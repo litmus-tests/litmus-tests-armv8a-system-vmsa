@@ -1,0 +1,71 @@
+arch = "AArch64"
+name = "LB+ctrl-svcs"
+symbolic = ["x", "y"]
+
+page_table_setup = """
+    physical pa1 pa2;
+    x |-> pa1;
+    y |-> pa2;
+
+    identity 0x1000 with code;
+    identity 0x2000 with code;
+
+    *pa1 = 0;
+    *pa2 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    LDR X0,[X1] // R x
+    CBNZ X0,LC00
+LC00:
+    SVC #0
+"""
+
+[section.thread0_el1_handler]
+address = "0x1400"
+code = """
+    STR X2,[X3] // W y 1
+    CBNZ X0,return_thread0
+return_thread0:
+    ERET
+"""
+
+[thread.0.reset]
+R1 = "x"
+R2 = "extz(0b1, 64)"
+R3 = "y"
+VBAR_EL1 = "extz(0x1000, 64)"
+"PSTATE.EL" = "0b00"
+"PSTATE.SP" = "0b0"
+
+[thread.1]
+init = {}
+code = """
+    LDR X0,[X1] // R y
+    CBNZ X0,LC10
+LC10:
+    SVC #0
+"""
+
+[section.thread1_el1_handler]
+address = "0x2400"
+code = """
+    STR X2,[X3] // W x 1
+    CBNZ X0,return_thread1
+return_thread1:
+    ERET
+"""
+
+[thread.1.reset]
+R1 = "y"
+R2 = "extz(0b1, 64)"
+R3 = "x"
+VBAR_EL1 = "extz(0x2000, 64)"
+"PSTATE.EL" = "0b00"
+"PSTATE.SP" = "0b0"
+
+[final]
+assertion = "0:X0=1 & 1:X0=1"
+
