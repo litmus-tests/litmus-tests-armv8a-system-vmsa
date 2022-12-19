@@ -48,8 +48,6 @@ code = """
 [thread.2.reset]
 R1 = "w"
 R3 = "x"
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 
 [thread.3]
@@ -63,8 +61,6 @@ code = """
 [thread.3.reset]
 R1 = "y"
 R3 = "z"
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 
 [final]

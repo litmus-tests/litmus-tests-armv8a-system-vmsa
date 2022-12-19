@@ -58,8 +58,6 @@ code = """
 R1 = "z"
 R4 = "x"
 VBAR_EL1 = "extz(0x1000, 64)"
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [section.thread2_el1_handler]
 address = "0x1400"

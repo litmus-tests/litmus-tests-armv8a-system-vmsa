@@ -33,7 +33,6 @@ R2 = "mkdesc3(oa=pa2)"
 R3 = "pte2(x, page_table_base)"
 R4 = "mkdesc2(table=extz(0x283000,64))"
 R5 = "x"
-"PSTATE.EL" = "0b00"
 
 [thread.1]
 init = {}
@@ -46,8 +45,6 @@ R1 = "x"
 
 VBAR_EL1 = "extz(0x1000, 64)"
 
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 [section.thread1_el1_handler]
 address = "0x1400"

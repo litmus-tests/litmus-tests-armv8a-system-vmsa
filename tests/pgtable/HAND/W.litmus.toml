@@ -16,8 +16,6 @@ code = """
 [thread.0.reset]
 R0 = "extz(0b0, 64)"
 R1 = "x"
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [final]
 assertion = "true"

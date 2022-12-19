@@ -24,8 +24,6 @@ code = """
 R0 = "extz(0b1, 64)"
 R1 = "x"
 
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [thread.1]
 init = {}
@@ -42,8 +40,6 @@ L0:
 R1 = "x"
 R4 = "y"
 
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 VBAR_EL1 = "extz(0x1000, 64)"
 
 

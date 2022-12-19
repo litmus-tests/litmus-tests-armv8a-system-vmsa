@@ -66,8 +66,6 @@ TTBR0_EL1 = "ttbr(asid=0x0000, base=vm_stage1)"
 VTTBR_EL2 = "ttbr(vmid=0x0000, base=vm_stage2)"
 TTBR0_EL2 = "ttbr(asid=0x0000, base=hyp_map)"
 
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [section.thread1_el1_handler]
 address = "0x1400"

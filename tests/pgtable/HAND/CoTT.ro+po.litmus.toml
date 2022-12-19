@@ -31,8 +31,6 @@ code = """
 [thread.1.reset]
 R1 = "x"
 R3 = "x"
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 [final]
 assertion = "1:X0 = 1 & 1:X2=0"

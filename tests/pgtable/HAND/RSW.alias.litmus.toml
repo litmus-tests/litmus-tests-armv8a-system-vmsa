@@ -26,8 +26,6 @@ R0 = "extz(0b1, 64)"
 R1 = "z"
 R2 = "extz(0b1, 64)"
 R3 = "y"
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 [thread.1]
 init = {}
@@ -45,8 +43,6 @@ R1 = "y"
 R4 = "w"
 R6 = "x"
 R9 = "z"
-"PSTATE.SP" = "0b0"
-"PSTATE.EL" = "0b00"
 
 [final]
 assertion = "1:X0=1 & 1:X8=0"

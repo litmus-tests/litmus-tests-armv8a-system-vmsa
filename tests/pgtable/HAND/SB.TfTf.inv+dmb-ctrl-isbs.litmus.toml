@@ -39,8 +39,6 @@ R1 = "pte3(x, page_table_base)"
 R3 = "y"
 R8 = "z"
 VBAR_EL1 = "extz(0x1000, 64)"
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [section.thread0_el1_handler]
 address = "0x1400"
@@ -71,8 +69,6 @@ R1 = "pte3(y, page_table_base)"
 R3 = "x"
 R8 = "z"
 VBAR_EL1 = "extz(0x2000, 64)"
-"PSTATE.EL" = "0b00"
-"PSTATE.SP" = "0b0"
 
 [section.thread1_el1_handler]
 address = "0x2400"
