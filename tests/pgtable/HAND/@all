@@ -30,6 +30,7 @@ CoTfWinv1+si.litmus.toml
 CoTfW.inv+dsb-isb.litmus.toml
 CoTfW.inv+dsb.litmus.toml
 CoTfW.inv+po.litmus.toml
+CoTfWinv+po.litmus.toml
 CoTRpte.inv+dsb-isb.litmus.toml
 CoTRpte.inv+dsb.litmus.toml
 CoTRpte.inv+po.litmus.toml
@@ -47,6 +48,7 @@ CoWinvT2+dsb-tlbiipa-dsb-tlbivmall-dsb-eret.litmus.toml
 CoWinvTa1.1+dsb-tlbiasidis-dsb-eret.litmus.toml
 CoWinvTa2.1+dsb-tlbiasidis-dsb-eret.litmus.toml
 CoWinvT+dsb-isb.litmus.toml
+CoWinvT.EL1+dsb-badtlbi-dsb-isb.litmus.toml
 CoWinvT.EL1+dsb-tlbi-dsb-isb.litmus.toml
 CoWinvT.EL1+dsb-tlbi-dsb.litmus.toml
 CoWinvT.EL1+dsb-tlbiis-dsb-isb.litmus.toml
