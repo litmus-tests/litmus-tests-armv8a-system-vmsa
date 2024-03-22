@@ -24,7 +24,7 @@ code = """
     STLR X1, [X4] // [p] := d1
     STR X2, [X3] // [d2] := 2
     STLR X3, [X4] // [p] := d2
-    MSR S3_0_C12_C11_5, #1 // ICC_SGI1R_EL1 // is this the right value???
+    MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
     LDAR X8, [X9] // r := [f]
     STR X5, [X1] // [d1] := 3
 """
@@ -38,6 +38,7 @@ R4 = "p"
 R5 = "extz(0b11, 64)"
 R8 = "extz(0b0, 64)"
 R9 = "f"
+R12 = "extz(0b1, 64)" # need to fix
 
 "PSTATE.EL" = "0b00"
 
