@@ -25,6 +25,7 @@ code = """
     STR X2, [X3] // [d2] := 2
     STLR X3, [X4] // [p] := d2
     MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
+    // might need an ISB here?
     LDAR X8, [X9] // r := [f]
     STR X5, [X1] // [d1] := 3
 """
