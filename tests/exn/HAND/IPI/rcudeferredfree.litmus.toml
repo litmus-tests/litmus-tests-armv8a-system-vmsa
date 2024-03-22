@@ -1,0 +1,69 @@
+arch = "AArch64"
+name = "rcudeferredfree"
+symbolic = ["x", "y", "p"]
+
+page_table_setup = """
+    physical pa1 pa2 pa3;
+    x |-> pa1;
+    y |-> pa2;
+    f |-> pa3;
+
+    identity 0x1000 with code;
+
+    *pa1 = 0;
+    *pa2 = 0;
+    *pa3 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0, [X1] // [d1] := 1
+    MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
+    // might need an ISB here?
+    LDAR X8, [X9] // r := [f]
+    STR X0, [X2] // [d1] := 3
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "y"
+R8 = "extz(0b0, 64)"
+R9 = "f"
+R12 = "extz(0b1, 64)" # need to fix
+
+"PSTATE.EL" = "0b00"
+
+[thread.1]
+init = {}
+code = """
+    MSR DAIFSet, #0b0010 // mask IPIs
+    LDR X0, [X1]
+    LDR X2, [X3]
+    MSR DAIFClr, #0b0010 // unmask IPIs
+"""
+
+[thread.1.reset]
+R0 = "extz(0b0, 64)"
+R1 = "x"
+R2 = "extz(0b0, 64)"
+R3 = "y"
+R4 = "extz(0b1, 64)"
+R5 = "f"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b00"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    STLR X4, [X5]
+return:
+    ERET
+"""
+
+[final]
+assertion = "0:X8 = 1 & 1:X0 = 0 & 1:X3 = 1"
+
