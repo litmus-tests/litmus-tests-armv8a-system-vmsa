@@ -1,6 +1,6 @@
 arch = "AArch64"
 name = "rcump"
-symbolic = ["x", "y", "p"]
+symbolic = ["x", "y", "f"]
 
 page_table_setup = """
     physical pa1 pa2 pa3;
