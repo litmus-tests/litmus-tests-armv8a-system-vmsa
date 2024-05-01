@@ -21,7 +21,7 @@ code = """
 [thread.0.reset]
 R0 = "extz(0b1, 64)"
 R1 = "x"
-R12 = "extz(0b1, 64)" # need to fix
+R12 = "extz(0b10000000000000000000000000000000000000000, 64)"
 
 "PSTATE.EL" = "0b00"
 
