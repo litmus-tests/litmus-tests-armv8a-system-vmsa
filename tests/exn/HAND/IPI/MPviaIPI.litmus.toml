@@ -1,5 +1,5 @@
 arch = "AArch64"
-name = "MPviaIPI" # find a better name
+name = "MPviaIPI"
 symbolic = ["x"]
 
 page_table_setup = """
@@ -15,13 +15,14 @@ page_table_setup = """
 init = {}
 code = """
     STR X0, [X1]
+    LSL X12, X12, #40
     MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
 """
 
 [thread.0.reset]
 R0 = "extz(0b1, 64)"
 R1 = "x"
-R12 = "extz(0b10000000000000000000000000000000000000000, 64)"
+R12 = "extz(0b1, 64)"
 
 "PSTATE.EL" = "0b00"
 
@@ -35,6 +36,7 @@ code = """
 R0 = "extz(0b0, 64)"
 R1 = "extz(0b0, 64)"
 R2 = "x"
+R4 = "extz(0b0, 64)"
 VBAR_EL1 = "extz(0x1000, 64)"
 
 "PSTATE.SP" = "0b0"
@@ -43,8 +45,13 @@ VBAR_EL1 = "extz(0x1000, 64)"
 [section.thread1_el1_handler]
 address = "0x1400"
 code = """
+    MRS X4, IAR
+    AND X4, X4, #0xFFFFFF
+    MSR EOIR, X4
+payload:
     MOV X0, #1
     LDR X1, [X2]
+return:
     ERET
 """
 

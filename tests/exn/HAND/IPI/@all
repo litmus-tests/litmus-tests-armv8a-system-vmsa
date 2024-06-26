@@ -1,3 +1,6 @@
-gcipi1.litmus.toml
-gcipi2.litmus.toml
-gcipi3.litmus.toml
+MP+TakeInterrupt+dmbsy
+MP+dmbsy+TakeInterrupt
+MPviaIPI
+RCU-MP
+RCU-deferred-free
+SB+Verona

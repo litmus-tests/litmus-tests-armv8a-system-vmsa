@@ -1,0 +1,92 @@
+arch = "AArch64"
+name = "MP+TakeInterrupt+dmbsy"
+symbolic = ["x", "y"]
+
+page_table_setup = """
+    physical pa1 pa2;
+    x |-> pa1;
+    y |-> pa2;
+
+    identity 0x1000 with code;
+    identity 0x2000 with code;
+
+    *pa1 = 0;
+    *pa2 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0, [X1] // *x = 1
+    MOV X3, #1
+    MOV X3, #0
+    STR X0, [X2] // *y = 1
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "y"
+R8 = "extz(0b0, 64)"
+
+"PSTATE.EL" = "0b00"
+
+[section.thread0_el1_handler]
+address = "0x1400"
+code = """
+    MRS X4, IAR
+    AND X4, X4, #0xFFFFFF
+    MSR EOIR, X4
+    AND X3, X3, #1
+return:
+    ERET
+"""
+
+
+[thread.1]
+init = {}
+code = """
+    LDR X0, [X1] // ... = *y
+    DMB SY
+    LDR X2, [X3] // ... = *x
+    MOV X4, #1
+"""
+
+[thread.1.reset]
+R0 = "extz(0b0, 64)"
+R1 = "y"
+R2 = "extz(0b0, 64)"
+R3 = "x"
+R4 = "extz(0b0, 64)"
+R5 = "extz(0b1, 64)"
+R6 = "extz(0b0, 64)"
+VBAR_EL1 = "extz(0x2000, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b00"
+
+[section.thread1_el1_handler]
+address = "0x2400"
+code = """
+    MRS X6, IAR
+    AND X6, X6, #0xFFFFFF
+    MSR EOIR, X6
+    AND X5, X4, #1
+return:
+    ERET
+"""
+
+[thread.2]
+init = {}
+code = """
+    LSL X12, X12, #40
+    MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
+"""
+
+[thread.2.reset]
+R12 = "extz(0b1, 64)"
+
+"PSTATE.EL" = "0b01"
+
+[final]
+assertion = "0:X3 = 1 & 1:X0 = 1 & 1:X3 = 0"
