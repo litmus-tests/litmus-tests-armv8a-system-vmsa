@@ -1,0 +1,53 @@
+arch = "AArch64"
+name = "MP+dmb+fault"
+symbolic = ["x", "y", "z"]
+
+page_table_setup = """
+    physical pa1 pa2;
+    x |-> pa1;
+    y |-> pa2;
+    z |-> invalid;
+    identity 0x1000 with code;
+"""
+
+[thread.0]
+init = {}
+code = """
+    STR X0,[X1] // W x 1
+    DMB SY
+    STR X2,[X3] // W y 1
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "extz(0b1, 64)"
+R3 = "y"
+
+[thread.1]
+init = {}
+code = """
+    LDR X0,[X1] // R y
+    LDR X4,[X5] // T z ~~> fault
+"""
+
+[thread.1.reset]
+R1 = "y"
+R3 = "x"
+R5 = "z"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+[section.thread1_el1_handler]
+address = "0x1400"
+code = """
+    LDR X2,[X3] // R x
+
+    MRS X10,ELR_EL1
+    ADD X10,X10,#4
+    MSR ELR_EL1,X10
+    ERET
+"""
+
+[final]
+assertion = "1:X0=1 & 1:X2=0"
+
