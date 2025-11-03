@@ -1,0 +1,64 @@
+arch = "AArch64"
+name = "LB+TakeInterrupt-eret+data-GenerateInterrupt"
+symbolic = ["x"]
+
+page_table_setup = """
+    physical pa1;
+    x |-> pa1;
+
+    identity 0x1000 with code;
+
+    *pa1 = 0;
+"""
+
+[thread.0]
+init = {}
+code = """
+    MOV X2, #1
+    STR X0, [X1] // *x = 1
+"""
+
+[thread.0.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "extz(0b0, 64)"
+R3 = "extz(0b0, 64)"
+VBAR_EL1 = "extz(0x1000, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b01"
+
+[section.thread0_el1_handler]
+address = "0x1400"
+code = """
+    MRS X4, IAR
+    AND X4, X4, #0xFFFFFF
+    MSR EOIR, X4
+payload:
+    MOV X3, X2
+return:
+    ERET
+"""
+
+[thread.1]
+init = {}
+code = """
+    LDR X0, [X1] // .. = *x
+    EOR X0, X0, X0
+    LSL X12, X12, #40
+    ORR X12, X12, X0
+    MSR S3_0_C12_C11_5, X12 // ICC_SGI1R_EL1
+"""
+
+[thread.1.reset]
+R0 = "extz(0b1, 64)"
+R1 = "x"
+R2 = "extz(0b0, 64)"
+R12 = "extz(0b1, 64)"
+
+"PSTATE.SP" = "0b0"
+"PSTATE.EL" = "0b00"
+
+
+[final]
+assertion = "0:X3 = 0 & 0:X2 = 0 & 1:X2 = 1"
